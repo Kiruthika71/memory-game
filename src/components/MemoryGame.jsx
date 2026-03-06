@@ -5,7 +5,7 @@ const MemoryGame = () => {
   const [cards, setCards] = useState([]); // for all cards
 
   const [flipped, setFlipped] = useState([]); // to track flipped ones
-  
+
   const [solved, setSolved] = useState([]); // to track correct solved ones
 
   const [disabled, setDisabled] = useState(false); // once solved disable clicking cards
@@ -73,30 +73,34 @@ const MemoryGame = () => {
   const isFlipped = (id) => flipped.includes(id) || solved.includes(id);
   const isSolved = (id) => solved.includes(id);
 
-  useEffect(()=>{
-    if(solved.length === cards.length && cards.length>0) {
-        setWon(true);
+  useEffect(() => {
+    if (solved.length === cards.length && cards.length > 0) {
+      setWon(true);
     }
-  }, [solved,cards])
+  }, [solved, cards]);
 
   return (
-    <div className="bg-gray-100 w-full min-h-screen flex flex-col items-center justify-center">
+    <div className="bg-gray-100 w-full min-h-screen flex flex-col items-center justify-center p-3">
       <h2 className="text-xl font-semibold mb-[10px]">Memory Game</h2>
       {/* Input */}
-      <div className="mb-4 flex items-center">
-        <label htmlFor="gridSize" className="mr-2">
-          Grid Size: (max 10)
-        </label>
+      <div className="mb-4 flex items-center gap-2">
+        <label>Grid Size:</label>
 
-        <input
-          type="number"
-          id="gridSize"
-          min="2"
-          max="10"
-          value={gridSize}
-          onChange={handleGridSizeChange}
-          className="border-2 border-gray-300 rounded px-4 py-1"
-        />
+        <button
+          onClick={() => setGridSize((prev) => Math.max(2, prev - 1))}
+          className="px-3 py-1 bg-gray-300 rounded"
+        >
+          -
+        </button>
+
+        <span className="px-3">{gridSize}</span>
+
+        <button
+          onClick={() => setGridSize((prev) => Math.min(10, prev + 1))}
+          className="px-3 py-1 bg-gray-300 rounded"
+        >
+          +
+        </button>
       </div>
 
       {/* Game Board */}
@@ -113,11 +117,13 @@ const MemoryGame = () => {
               key={card.id}
               onClick={() => handleClick(card.id)}
               className={`aspect-square flex items-center justify-center text-xl font-bold rounded-lg cursor-pointer transition-all duration-300 
-                ${isFlipped(card.id) ? 
-                    isSolved(card.id) 
-                    ?  "bg-green-500 text-white"
-                    : "bg-blue-500 text-white" 
-                    : "bg-gray-300 text-gray-400"}`}
+                ${
+                  isFlipped(card.id)
+                    ? isSolved(card.id)
+                      ? "bg-green-500 text-white"
+                      : "bg-blue-500 text-white"
+                    : "bg-gray-300 text-gray-400"
+                }`}
             >
               {isFlipped(card.id) ? card.number : "?"}
             </div>
@@ -127,10 +133,17 @@ const MemoryGame = () => {
 
       {/* Result */}
 
-        {won && <div className="mt-4 text-4xl font-bold text-green-600 animate-bounce">You won 🎉</div>}
+      {won && (
+        <div className="mt-4 text-4xl font-bold text-green-600 animate-bounce">
+          You won 🎉
+        </div>
+      )}
 
       {/* Play Again / reset button */}
-      <button onClick={initializeGame} className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors cursor-pointer">
+      <button
+        onClick={initializeGame}
+        className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors cursor-pointer"
+      >
         {won ? "Play Again" : "Reset"}
       </button>
     </div>
